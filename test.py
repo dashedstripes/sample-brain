@@ -4,7 +4,7 @@ import numpy as np
 import wave
 
 model_weights_path = "/Users/adam/Code/sample-brain/model.pth"
-sequence_length = 1000
+sequence_length = 16000
 model = WaveNet(sequence_length)
 
 
