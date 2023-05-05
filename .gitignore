@@ -3,3 +3,4 @@ __pycache__
 .vscode
 data/
 model.pth
+output.wav
