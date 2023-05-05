@@ -1,0 +1,1 @@
+Currently, we're only training on the final sample of the training audio files, we need to train on every sample inside the audio, otherwise when we generate new sounds, we're only going to get the last bit lol
