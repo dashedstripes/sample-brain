@@ -5,7 +5,7 @@ from torch.utils.data import Dataset
 import numpy as np
 
 class WaveNetDataset(Dataset):
-    def __init__(self, directory_path, sequence_length=10000):
+    def __init__(self, directory_path, sequence_length=16000):
         self.file_paths = librosa.util.find_files(directory_path)
         self.sequence_length = sequence_length
     

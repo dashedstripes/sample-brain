@@ -1,9 +1,11 @@
+import torch
 import torch.nn as nn
 from model import WaveNet
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from dataset import WaveNetDataset
 
+weights_path = '/Users/adam/Code/sample-brain/model.pth'
 directory_path = '/Users/adam/Code/sample-brain/data'
 dataset = WaveNetDataset(directory_path)
 model = WaveNet(dataset[0][0].shape[-1])
@@ -42,6 +44,9 @@ def train_model(model, dataset, num_epochs=5, batch_size=1, learning_rate=0.001)
                 running_loss = 0.0
                 
     print("Finished training!")
+    print("Saving weights")
+    torch.save(model.state_dict(), weights_path)
+    print("Weights saved")
 
 
 train_model(model, dataset)
