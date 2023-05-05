@@ -31,12 +31,15 @@ import torch.nn.functional as F
 
 
 class WaveNet(nn.Module):
-    def __init__(self, sequence_length, n_channels=1, n_layers=1, n_blocks=1, n_filters=2, kernel_size=2, dilation_base=2):
+    def __init__(self, sequence_length, n_channels=1, n_layers=10, n_blocks=2, n_filters=2, kernel_size=2, dilation_base=2):
         super(WaveNet, self).__init__()
         self.n_layers = n_layers
         self.n_blocks = n_blocks
         self.dilation_base = dilation_base
-    
+        
+        # Determine the padding required to make the sequence length a power of 2
+        sequence_length = 2 ** math.ceil(math.log2(sequence_length))
+        padding = sequence_length - sequence_length
         
         # Input convolution layer
         self.conv_in = nn.Conv1d(n_channels, n_filters, kernel_size=1)
@@ -48,7 +51,7 @@ class WaveNet(nn.Module):
             for l in range(n_layers):
                 in_filters = n_filters
                 out_filters = n_filters
-                self.res_blocks.append(ResidualBlock(in_filters, out_filters, kernel_size, dilation))
+                self.res_blocks.append(ResidualBlock(in_filters, out_filters, kernel_size, dilation, padding))
         
         # Output layers
         self.relu = nn.ReLU()
@@ -98,13 +101,13 @@ class WaveNet(nn.Module):
 class ResidualBlock(nn.Module):
     
     # we define a bunch of layers
-    def __init__(self, in_filters, out_filters, kernel_size, dilation):
+    def __init__(self, in_filters, out_filters, kernel_size, dilation, padding):
         super(ResidualBlock, self).__init__()
         # conv_dilated is a 1d convolutional layer that takes in filters, kernal size and dilation, it also adds some padding (// is floor division in python) the padding is an integer value
-        self.conv_dilated = nn.Conv1d(in_filters, out_filters, kernel_size=kernel_size, dilation=dilation)
+        self.conv_dilated = nn.Conv1d(in_filters, out_filters, kernel_size=kernel_size, dilation=dilation, padding=(kernel_size - 1) * dilation // 2 + padding // 2)
 
         # conv_gate is identical to conv_dilated
-        self.conv_gate = nn.Conv1d(in_filters, out_filters, kernel_size=kernel_size, dilation=dilation)
+        self.conv_gate = nn.Conv1d(in_filters, out_filters, kernel_size=kernel_size, dilation=dilation, padding=(kernel_size - 1) * dilation // 2 + padding // 2)
 
         # sigmoid maps input values to output values between 0 and 1, smoothly, S shape curve
         self.sigmoid = nn.Sigmoid()

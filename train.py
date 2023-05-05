@@ -23,8 +23,8 @@ def train_model(model, dataset, num_epochs=5, batch_size=1, learning_rate=0.001)
     for epoch in range(num_epochs):
         running_loss = 0.0
         for i, (input, target) in enumerate(dataloader):
-            inputs = input[:, :, 10:]
-            targets = target[:, :, :10]
+            inputs = input[:, :, 1:]
+            targets = target[:, :, :1]
 
             # # Zero the parameter gradients
             optimizer.zero_grad()
